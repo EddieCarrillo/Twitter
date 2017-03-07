@@ -7,6 +7,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -173,7 +174,7 @@
                                             <outlet property="profilePicture" destination="2BY-tD-xO7" id="Fx2-1U-qxO"/>
                                             <outlet property="retweetCount" destination="5rq-9v-zkL" id="Uhy-yc-ORg"/>
                                             <outlet property="tweetTextLabel" destination="Lcn-Mi-2jJ" id="C8U-5M-6ie"/>
-                                            <segue destination="GEs-PD-92U" kind="show" id="wYi-c1-NEL"/>
+                                            <segue destination="GEs-PD-92U" kind="show" identifier="CellSegue" id="wYi-c1-NEL"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -182,11 +183,18 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="dqp-Pm-PpK">
-                        <barButtonItem key="rightBarButtonItem" image="edit-icon" style="plain" id="DPn-f3-4YO">
-                            <connections>
-                                <segue destination="K2h-nt-WRK" kind="show" identifier="newTweetSegue" id="QhZ-Lb-GtH"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem image="edit-icon" style="plain" id="DPn-f3-4YO">
+                                <connections>
+                                    <segue destination="K2h-nt-WRK" kind="show" identifier="newTweetSegue" id="QhZ-Lb-GtH"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem image="home-icon" id="iCe-zS-OJ2">
+                                <connections>
+                                    <segue destination="GEs-PD-92U" kind="show" identifier="HomeSegue" id="yhj-5I-Suy"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="hr4-Ig-q3I" id="5fM-me-dGo"/>
@@ -681,8 +689,12 @@
         <image name="account-icon" width="30" height="25"/>
         <image name="edit-icon" width="30" height="27"/>
         <image name="favor-icon" width="30" height="30"/>
+        <image name="home-icon" width="30" height="30"/>
         <image name="reply-icon" width="30" height="30"/>
         <image name="retweet-icon" width="30" height="30"/>
         <image name="settings-icon" width="80" height="80"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="yhj-5I-Suy"/>
+    </inferredMetricsTieBreakers>
 </document>

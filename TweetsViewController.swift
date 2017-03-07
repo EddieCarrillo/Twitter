@@ -141,6 +141,8 @@ class TweetsViewController: UIViewController, UITableViewDelegate, SaveTweetView
             let vc  = segue.destination as! ComposeTweetViewController
             vc.delegate = self
             
+        }else if (segue.identifier == "HomeSegue"){
+            let vc = segue.destination as! Profile
         }else{
             //Grab the cell that was pressed
             let cell = sender as! TweetCell
