@@ -14,6 +14,7 @@ class TwitterClient: BDBOAuth1SessionManager {
     
     var loginSuccess: (() -> ())?
     var loginFailure: ((Error)->())?
+    var user: User?
     
     
     static let sharedInstance = TwitterClient(baseURL: URL(string: "https://api.twitter.com")! , consumerKey: "hVQQ9kHseRNEOhVOsOqPeTXfY", consumerSecret: "6oHbCoKAZsz64CGSisAwZyQShq4TXomNupeBh3wk0jQMWXP1EW")
@@ -42,6 +43,7 @@ class TwitterClient: BDBOAuth1SessionManager {
         twitterClient?.get("1.1/account/verify_credentials.json", parameters: nil, progress: nil, success : { (task: URLSessionDataTask, response: Any?) -> Void in
             let userDictionary = response as! NSDictionary
             let user = User(dictionary : userDictionary)
+            self.user = user
             print(user.name!)
             print(user.screenname)
             print(user.tagline)
@@ -79,11 +81,39 @@ class TwitterClient: BDBOAuth1SessionManager {
       
     }
     
+    func getUserTimeline(user: User, sucess: @escaping (([Tweet]) -> ()), failure : @escaping (Error) -> ()){
+        let twitterClient = TwitterClient.sharedInstance
+        twitterClient?.get("/1.1/statuses/user_timeline.json?screen_name=\(user.screenname!)", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) -> () in
+            let dictionary = response as! [NSDictionary]
+            let tweets = Tweet.tweetsWithArray(dictionaries: dictionary)
+            
+            sucess(tweets)
+            
+        }, failure: { (task: URLSessionDataTask?, error:Error) in
+            failure (error)
+        })
+    
+    }
+    
     
     func logout(){
         User.currentUser = nil
         deauthorize()
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "UserDidLogOut"), object: nil)
+    }
+    
+    
+    func createNewTweet(tweetText: String, success: @escaping ()->(), failure: @escaping (Error) -> ()){
+        
+        let twitterClient = TwitterClient.sharedInstance
+        twitterClient?.post("/1.1/statuses/update.json?status=\(tweetText)", parameters: nil, progress: nil, success: { (task:URLSessionDataTask, response: Any?)->() in
+            print("Succesfully created new Tweet!")
+            print(response)
+        }, failure: { (task: URLSessionDataTask?, error:Error) in
+            print(error.localizedDescription)
+        })
+    
+    
     }
         
     

@@ -9,6 +9,8 @@
 import UIKit
 
 class Tweet: NSObject {
+    
+    var tweetOwner : User?
     var text: String?
     var timestamp : String?
     var retweetCount: Int = 0
@@ -22,17 +24,16 @@ class Tweet: NSObject {
         print(dictionary)
         text = dictionary["text"] as? String
         retweetCount = (dictionary["retweet_count"] as? Int) ?? 0
-        favoritesCount = (dictionary["favorites_count"] as? Int) ?? 0
+        favoritesCount = (dictionary["favorite_count"] as? Int) ?? 0
         
-        //Create a user from the tweet 
+        //Create a user from the tweet
+        tweetOwner = User(dictionary: dictionary["user"] as! NSDictionary)
         
-        let user = dictionary["user"] as! NSDictionary
-        name = user["screen_name"] as? String
-        username = user["name"] as? String
-        
-        let profileUrlString = user["profile_image_url_https"] as? String
-        if let profileUrlString = profileUrlString{
-            profilePicUrl = URL(string: profileUrlString)
+        name = tweetOwner?.name!
+        username = tweetOwner?.screenname
+  
+        if let profileUrl = tweetOwner?.profileUrl{
+            profilePicUrl = profileUrl
         }
         
         

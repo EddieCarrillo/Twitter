@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class TweetsViewController: UIViewController, UITableViewDelegate, SaveTweetViewControllerDelegate, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
 
@@ -26,19 +26,13 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         self.tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.estimatedRowHeight = 170
         
+        
         //Twittter color
         let twitterBlue = UIColor(red: 0.0, green: 172.0/255.0, blue: 237.0/255.0, alpha: 1.0)
         self.navigationController?.navigationBar.barTintColor = twitterBlue
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        
-        TwitterClient.sharedInstance?.homeTimeline(sucess: { (tweets: [Tweet]) -> () in
-            self.tweets = tweets
-            
-            self.tableView.reloadData()
-            
-        }, failure: { (error: Error) -> () in
-            print("error: \(error.localizedDescription)")
-        })
+        refreshTimeline()
+       
         
     }
     
@@ -90,7 +84,7 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         
         //reload data
         self.tableView.reloadData()
-        
+        print("Called")
         
     }
     @IBAction func onLikePressed(_ sender: Any) {
@@ -109,15 +103,63 @@ class TweetsViewController: UIViewController, UITableViewDelegate, UITableViewDa
       self.tableView.reloadData()
     }
     
+    func didTweet() {
+        
+        refreshTimeline()
+        
+    }
+    
+    func didCancelTweet() {
+        //Do nothing for now....
+    }
+    
+    
+    func refreshTimeline(){
+        TwitterClient.sharedInstance?.homeTimeline(sucess: { (tweets: [Tweet]) -> () in
+            self.tweets = tweets
+            
+            self.tableView.reloadData()
+            
+        }, failure: { (error: Error) -> () in
+            print("error: \(error.localizedDescription)")
+        })
+    }
+   
+    
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
+       
+        
+        if (segue.identifier == "newTweetSegue"){
+            let vc  = segue.destination as! ComposeTweetViewController
+            vc.delegate = self
+            
+        }else{
+            //Grab the cell that was pressed
+            let cell = sender as! TweetCell
+            //Get the index of the cell that was pressed
+            let indexPath = self.tableView.indexPath(for: cell)
+            
+            let tweet = tweets[(indexPath?.row)!]
+            
+            let vc = segue.destination as! TweetDetailViewController
+            vc.tweet = tweet
+            
+            
+        }
+        
+      
+    
+        
+        
     }
-    */
+ 
 
 }
